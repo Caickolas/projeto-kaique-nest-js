@@ -13,7 +13,4 @@ export class RegisterDto {
     @MaxLength(20, { message: UserMessagesHelper.REGISTER_PASSWORD_NOT_VALID, })
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: UserMessagesHelper.REGISTER_PASSWORD_NOT_VALID })
     password: string;
-
-    @IsBoolean()
-    Admin: boolean
 }
