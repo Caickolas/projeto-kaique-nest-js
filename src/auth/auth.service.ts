@@ -31,7 +31,7 @@ export class AuthService{
             email: user.email,
             name: user.name,
             admin: user.Admin,
-            token: this.jwtService.sign(tokenPayload, {secret:process.env.USER_JWT_SECRET_KEY})
+            token: this.jwtService.sign(tokenPayload, {secret: process.env.USER_JWT_SECRET_KEY})
         }
     };
 

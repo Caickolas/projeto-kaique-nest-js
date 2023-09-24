@@ -20,7 +20,7 @@ import { IsPublic } from 'src/auth/decorators/ispublic.decorator';
     @Post()
     @HttpCode(HttpStatus.OK)
     @IsPublic()
-    @UseInterceptors(FileInterceptor('arquivo', multerConfig))
+    @UseInterceptors(FileInterceptor('file', multerConfig))
     uploadArquivo(@UploadedFile() file: Express.MulterS3.File) {
       console.log(file);
       return this.filesService.salvarDados(file);

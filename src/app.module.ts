@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt.guard';
 import { FilesModule } from './config/files.module';
+import { CarsModule } from './cars/cars.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { FilesModule } from './config/files.module';
     MongooseModule.forRoot(process.env.DATABASE_URL),
     AuthModule,
     UserModule,
-    FilesModule
+    FilesModule,
+    CarsModule
   ],
   controllers: [],
   providers: [
