@@ -1,11 +1,17 @@
-import { Controller, Post, HttpCode, HttpStatus, Body, Put, Param, Get, Delete } from "@nestjs/common";
+import { Controller, Post, HttpCode, HttpStatus, Body, Put, Param, Get, Delete, Request, BadRequestException, UnauthorizedException } from "@nestjs/common";
 import { CarsService } from "./cars.service";
 import { CarsDto } from "./dtos/cars.dto";
+import { CarsMessagesHelper } from './helpers/messages.helper'
+import { UserService } from "src/user/user.service";
 import { IsPublic } from "src/auth/decorators/ispublic.decorator";
 
 @Controller("cars")
 export class CarsController {
-    constructor(private readonly carsService: CarsService) { }
+    constructor(
+        private readonly carsService: CarsService,
+        private readonly userService: UserService
+
+        ) { }
 
     @Get(':id')
     @IsPublic()
@@ -33,29 +39,61 @@ export class CarsController {
 
 
     @Post()
-    @IsPublic()
     @HttpCode(HttpStatus.OK)
-    async create(@Body() dto: CarsDto) {
-        await this.carsService.create(dto);
+    async create(@Request() req, @Body() dto: CarsDto) {
+        const {userId} = req?.user;
+
+        const user = await this.userService.getUserById(userId);
+
+        if(user.Admin === true){
+            await this.carsService.create(dto);
+
+            const carMessage = CarsMessagesHelper.CAR_CREATED_WITH_SUCCESS
+    
+            return carMessage
+        }
+
+        throw new UnauthorizedException(CarsMessagesHelper.CAR_UNAUTHORIZED)
+        
     }
 
     @Put(':id')
-    @IsPublic()
     @HttpCode(HttpStatus.OK)
-    async update(@Param() params, @Body() dto: CarsDto) {
-
+    async update(@Request() req, @Param() params, @Body() dto: CarsDto) {
         const { id } = params;
 
-        const updatedCar = await this.carsService.update(id, dto);
+        const {userId} = req?.user;
 
-        return updatedCar
+        const user = await this.userService.getUserById(userId);
+
+        if(user.Admin === true){
+            const updatedCar = await this.carsService.update(id, dto);
+
+            return updatedCar
+        }
+
+        throw new UnauthorizedException(CarsMessagesHelper.CAR_UNAUTHORIZED)
+
+
     }
 
     @Delete(':id')
-    @IsPublic()
-    async deleteCar(@Param() params){
+    async deleteCar(@Request() req, @Param() params){
         const { id } = params;
 
+        const {userId} = req?.user;
+
+        const user = await this.userService.getUserById(userId);
+
+        if(user.Admin === true){
+
         await this.carsService.delete(id)
+
+        const carMessage = CarsMessagesHelper.CAR_DELETED_WITH_SUCCESS
+
+        return carMessage
+        }
+
+        throw new UnauthorizedException(CarsMessagesHelper.CAR_UNAUTHORIZED)
     }
 }
