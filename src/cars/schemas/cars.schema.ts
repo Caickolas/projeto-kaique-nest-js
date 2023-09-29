@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { AnyArray, HydratedDocument } from "mongoose";
+import { Like } from "./likes.schema";
 
 export type CarsDocument = HydratedDocument<Cars>;
 
@@ -12,8 +13,12 @@ export class Cars {
     brand:string;
     @Prop({required: true})
     model:string;
+    @Prop({required: true})
+    likes: Like[]
+
     // @Prop({required: true})
     // photo:string;
+    
 }
 
 export const CarsSchema = SchemaFactory.createForClass(Cars);

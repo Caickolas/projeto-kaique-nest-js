@@ -96,4 +96,21 @@ export class CarsController {
 
         throw new UnauthorizedException(CarsMessagesHelper.CAR_UNAUTHORIZED)
     }
+
+    @Put(':id')
+    @HttpCode(HttpStatus.OK)
+    async Like(@Request() req, @Param() params, @Body() dto: CarsDto) {
+        const { carId } = params;
+
+        const {userId} = req?.user;
+
+        const user = await this.userService.getUserById(userId);
+
+        const car = await this.carsService.getCarById(carId);
+
+        const likedCar = await this.carsService.like(car, user);
+
+        return likedCar
+        
+    }
 }
